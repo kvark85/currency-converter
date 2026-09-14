@@ -73,3 +73,9 @@
 .optionActive {
   background: var(--border);
 }
+
+.optionDivider {
+  margin-top: 5px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}

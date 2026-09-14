@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { CURRENCIES, CURRENCY_FLAGS, type Currency } from "../lib/currencies";
 import styles from "./CurrencyField.module.css";
 
@@ -6,6 +6,8 @@ interface CurrencyFieldProps {
   id: string;
   label: string;
   value: Currency;
+  /** Most-recently-used currencies (shared with the other field), most recent first. */
+  recentCurrencies: Currency[];
   onChange: (value: Currency) => void;
 }
 
@@ -15,9 +17,9 @@ interface CurrencyFieldProps {
  * there is no way to show a flag icon next to each currency inside a
  * plain <select>.
  */
-export function CurrencyField({ id, label, value, onChange }: CurrencyFieldProps) {
+export function CurrencyField({ id, label, value, recentCurrencies, onChange }: CurrencyFieldProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(() => CURRENCIES.indexOf(value));
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -26,6 +28,18 @@ export function CurrencyField({ id, label, value, onChange }: CurrencyFieldProps
   const labelId = `${id}-label`;
   const listboxId = `${id}-listbox`;
   const optionId = (index: number) => `${id}-option-${index}`;
+
+  // The field's own current value always leads, so it's never buried by
+  // history from the *other* field; then other recently-used currencies;
+  // then everything else in the original order.
+  const { orderedCurrencies, pinnedCount } = useMemo(() => {
+    const pinned: Currency[] = [value];
+    for (const code of recentCurrencies) {
+      if (!pinned.includes(code)) pinned.push(code);
+    }
+    const rest = CURRENCIES.filter((code) => !pinned.includes(code));
+    return { orderedCurrencies: [...pinned, ...rest], pinnedCount: pinned.length };
+  }, [value, recentCurrencies]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -53,7 +67,7 @@ export function CurrencyField({ id, label, value, onChange }: CurrencyFieldProps
   }, [activeIndex, isOpen, id]);
 
   function open() {
-    setActiveIndex(CURRENCIES.indexOf(value));
+    setActiveIndex(orderedCurrencies.indexOf(value));
     setIsOpen(true);
   }
 
@@ -63,7 +77,7 @@ export function CurrencyField({ id, label, value, onChange }: CurrencyFieldProps
   }
 
   function select(index: number) {
-    const next = CURRENCIES[index];
+    const next = orderedCurrencies[index];
     if (next) onChange(next);
     close();
   }
@@ -79,7 +93,7 @@ export function CurrencyField({ id, label, value, onChange }: CurrencyFieldProps
     switch (event.key) {
       case "ArrowDown":
         event.preventDefault();
-        setActiveIndex((i) => Math.min(i + 1, CURRENCIES.length - 1));
+        setActiveIndex((i) => Math.min(i + 1, orderedCurrencies.length - 1));
         break;
       case "ArrowUp":
         event.preventDefault();
@@ -91,7 +105,7 @@ export function CurrencyField({ id, label, value, onChange }: CurrencyFieldProps
         break;
       case "End":
         event.preventDefault();
-        setActiveIndex(CURRENCIES.length - 1);
+        setActiveIndex(orderedCurrencies.length - 1);
         break;
       case "Enter":
       case " ":
@@ -146,15 +160,19 @@ export function CurrencyField({ id, label, value, onChange }: CurrencyFieldProps
           aria-activedescendant={optionId(activeIndex)}
           onKeyDown={handleListKeyDown}
         >
-          {CURRENCIES.map((code, index) => (
+          {orderedCurrencies.map((code, index) => (
             <li
               key={code}
               id={optionId(index)}
               role="option"
               aria-selected={code === value}
-              className={
-                index === activeIndex ? `${styles.option} ${styles.optionActive}` : styles.option
-              }
+              className={[
+                styles.option,
+                index === activeIndex && styles.optionActive,
+                index === pinnedCount && pinnedCount < orderedCurrencies.length && styles.optionDivider,
+              ]
+                .filter(Boolean)
+                .join(" ")}
               onMouseEnter={() => setActiveIndex(index)}
               onClick={() => select(index)}
             >

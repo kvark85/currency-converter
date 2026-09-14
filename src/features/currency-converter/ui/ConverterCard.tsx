@@ -11,6 +11,7 @@ export function ConverterCard() {
     amount,
     from,
     to,
+    recent,
     convertedAmount,
     unitRate,
     status,
@@ -30,11 +31,23 @@ export function ConverterCard() {
 
       <div className={styles.row}>
         <div className={styles.field}>
-          <CurrencyField id="from" label="From" value={from} onChange={setFrom} />
+          <CurrencyField
+            id="from"
+            label="From"
+            value={from}
+            recentCurrencies={recent}
+            onChange={setFrom}
+          />
         </div>
         <SwapButton onClick={swap} />
         <div className={styles.field}>
-          <CurrencyField id="to" label="To" value={to} onChange={setTo} />
+          <CurrencyField
+            id="to"
+            label="To"
+            value={to}
+            recentCurrencies={recent}
+            onChange={setTo}
+          />
         </div>
       </div>
 
