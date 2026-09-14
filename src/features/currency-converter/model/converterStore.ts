@@ -12,7 +12,11 @@ interface ConverterState {
   amount: string;
   from: Currency;
   to: Currency;
-  /** Most-recently-used currencies first, shared between both fields. */
+  /**
+   * Currencies the user has actually picked, most-recent first, shared
+   * between both fields. Starts empty — the initial `from`/`to` defaults
+   * are not "usage" and must never get stuck in here permanently.
+   */
   recent: Currency[];
   setAmount: (amount: string) => void;
   setFrom: (currency: Currency) => void;
@@ -31,7 +35,7 @@ export const useConverterStore = create<ConverterState>()(
       amount: "100",
       from: "USD",
       to: "EUR",
-      recent: ["USD", "EUR"],
+      recent: [],
       setAmount: (amount) => set({ amount }),
       setFrom: (from) => set((state) => ({ from, recent: touch(state.recent, from) })),
       setTo: (to) => set((state) => ({ to, recent: touch(state.recent, to) })),

@@ -169,7 +169,10 @@ export function CurrencyField({ id, label, value, recentCurrencies, onChange }: 
               className={[
                 styles.option,
                 index === activeIndex && styles.optionActive,
-                index === pinnedCount && pinnedCount < orderedCurrencies.length && styles.optionDivider,
+                index === pinnedCount &&
+                  pinnedCount > 1 &&
+                  pinnedCount < orderedCurrencies.length &&
+                  styles.optionDivider,
               ]
                 .filter(Boolean)
                 .join(" ")}
