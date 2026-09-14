@@ -14,7 +14,7 @@ export function AmountField({ value, onChange }: AmountFieldProps) {
   return (
     <div>
       <label className={styles.label} htmlFor="amount">
-        Сумма
+        Amount
       </label>
       <input
         id="amount"

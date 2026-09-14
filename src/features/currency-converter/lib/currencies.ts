@@ -8,6 +8,7 @@ export const CURRENCIES = [
   "CHF",
   "KZT",
   "UAH",
+  "PLN",
   "TRY",
   "AED",
   "GEL",

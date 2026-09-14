@@ -23,6 +23,7 @@ export const FALLBACK_RATES_USD: RatesTable = {
   CHF: 0.88,
   KZT: 480,
   UAH: 41,
+  PLN: 4.0,
   TRY: 34,
   AED: 3.67,
   GEL: 2.7,

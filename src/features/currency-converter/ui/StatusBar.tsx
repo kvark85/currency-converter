@@ -2,10 +2,10 @@ import type { RatesStatus } from "../model/useConversion";
 import styles from "./StatusBar.module.css";
 
 const STATUS_TEXT: Record<RatesStatus, string> = {
-  loading: "Загрузка курсов…",
-  live: "Курсы обновлены",
-  cached: "Курсы из кэша (обновляются раз в час)",
-  "offline-fallback": "Нет соединения — используются приблизительные курсы",
+  loading: "Loading rates…",
+  live: "Rates up to date",
+  cached: "Rates from cache (refreshed hourly)",
+  "offline-fallback": "No connection — using approximate rates",
 };
 
 export function StatusBar({ status }: { status: RatesStatus }) {

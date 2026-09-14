@@ -10,9 +10,9 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["icons/favicon.svg"],
       manifest: {
-        name: "Конвертер валют",
-        short_name: "Валюты",
-        description: "Быстрый офлайн-конвертер валют",
+        name: "Currency Converter",
+        short_name: "Currency",
+        description: "Fast offline-first currency converter",
         theme_color: "#2563eb",
         background_color: "#f4f5f7",
         display: "standalone",
