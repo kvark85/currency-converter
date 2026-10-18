@@ -31,9 +31,17 @@ npm run preview       # local preview of the production build
 
 ## Installing as an app
 
-After `npm run build && npm run preview`, open `http://localhost:4173` in
-Chrome/Edge — an install icon appears in the address bar. Once installed,
-the app keeps working offline on the last cached exchange rates.
+After `npm run build && npm run preview`, open
+`http://localhost:4173/currency-converter/` in Chrome/Edge — an install icon
+appears in the address bar. Once installed, the app keeps working offline on
+the last cached exchange rates.
+
+## Deployment (GitHub Pages)
+
+Every push to `main` is built and published by
+`.github/workflows/deploy.yml` to
+`https://kvark85.github.io/currency-converter/`. On Android, open that URL
+in Chrome and choose "Install app" / "Add to Home screen".
 
 ## Rates source
 

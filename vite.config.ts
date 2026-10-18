@@ -4,6 +4,8 @@ import { VitePWA } from "vite-plugin-pwa";
 
 // https://vite.dev/config/
 export default defineConfig({
+  // GitHub Pages serves a project site from /<repo>/, not from the domain root.
+  base: "/currency-converter/",
   plugins: [
     react(),
     VitePWA({
@@ -16,7 +18,6 @@ export default defineConfig({
         theme_color: "#2563eb",
         background_color: "#f4f5f7",
         display: "standalone",
-        start_url: "/",
         icons: [
           {
             src: "icons/pwa-192x192.png",
