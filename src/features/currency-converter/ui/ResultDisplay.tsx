@@ -1,4 +1,4 @@
-import { formatAmount } from "../lib/format";
+import { formatAmount, formatRate } from "../lib/format";
 import styles from "./ResultDisplay.module.css";
 
 interface ResultDisplayProps {
@@ -15,7 +15,7 @@ export function ResultDisplay({ convertedAmount, unitRate, from, to }: ResultDis
         {convertedAmount === null ? "—" : `${formatAmount(convertedAmount)} ${to}`}
       </div>
       <div className={styles.rateInfo}>
-        {unitRate === null ? "" : `1 ${from} = ${formatAmount(unitRate)} ${to}`}
+        {unitRate === null ? "" : `1 ${from} = ${formatRate(unitRate)} ${to}`}
       </div>
     </>
   );
