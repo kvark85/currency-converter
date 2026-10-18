@@ -2,10 +2,22 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { type Currency, isCurrency } from "../lib/currencies";
 
+const MAX_RECENT = 4;
+
+function touch(recent: Currency[], code: Currency): Currency[] {
+  return [code, ...recent.filter((c) => c !== code)].slice(0, MAX_RECENT);
+}
+
 interface ConverterState {
   amount: string;
   from: Currency;
   to: Currency;
+  /**
+   * Currencies the user has actually picked, most-recent first, shared
+   * between both fields. Starts empty — the initial `from`/`to` defaults
+   * are not "usage" and must never get stuck in here permanently.
+   */
+  recent: Currency[];
   setAmount: (amount: string) => void;
   setFrom: (currency: Currency) => void;
   setTo: (currency: Currency) => void;
@@ -23,9 +35,10 @@ export const useConverterStore = create<ConverterState>()(
       amount: "100",
       from: "USD",
       to: "EUR",
+      recent: [],
       setAmount: (amount) => set({ amount }),
-      setFrom: (from) => set({ from }),
-      setTo: (to) => set({ to }),
+      setFrom: (from) => set((state) => ({ from, recent: touch(state.recent, from) })),
+      setTo: (to) => set((state) => ({ to, recent: touch(state.recent, to) })),
       swap: () => set((state) => ({ from: state.to, to: state.from })),
     }),
     {
@@ -34,16 +47,21 @@ export const useConverterStore = create<ConverterState>()(
         amount: state.amount,
         from: state.from,
         to: state.to,
+        recent: state.recent,
       }),
       merge: (persisted, current) => {
         const saved = persisted as
-          | Partial<Pick<ConverterState, "amount" | "from" | "to">>
+          | Partial<Pick<ConverterState, "amount" | "from" | "to" | "recent">>
           | undefined;
+        const recent = Array.isArray(saved?.recent)
+          ? saved.recent.filter(isCurrency).slice(0, MAX_RECENT)
+          : current.recent;
         return {
           ...current,
           ...saved,
           from: saved?.from && isCurrency(saved.from) ? saved.from : current.from,
           to: saved?.to && isCurrency(saved.to) ? saved.to : current.to,
+          recent,
         };
       },
     },

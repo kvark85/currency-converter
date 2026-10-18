@@ -6,7 +6,7 @@ import { FALLBACK_RATES_USD } from "../api/ratesApi";
 export type RatesStatus = "loading" | "live" | "cached" | "offline-fallback";
 
 export function useConversion() {
-  const { amount, from, to, setAmount, setFrom, setTo, swap } = useConverterStore();
+  const { amount, from, to, recent, setAmount, setFrom, setTo, swap } = useConverterStore();
   const { data: liveRates, isLoading, isFetching, isError } = useRatesQuery();
 
   const rates = liveRates ?? FALLBACK_RATES_USD;
@@ -41,6 +41,7 @@ export function useConversion() {
     amount,
     from,
     to,
+    recent,
     convertedAmount,
     unitRate,
     status,

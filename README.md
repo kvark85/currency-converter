@@ -1,42 +1,42 @@
-# Конвертер валют
+# Currency Converter
 
-Лёгкое офлайн-первое PWA-приложение для конвертации валют. Устанавливается
-как обычное приложение (desktop/mobile) и продолжает работать без сети на
-последних известных курсах.
+A lightweight, offline-first PWA for converting currencies. Installable as
+a regular app (desktop/mobile) and keeps working without a network on the
+last known rates.
 
-## Стек
+## Stack
 
 - [Vite 6](https://vite.dev/) + [React 19](https://react.dev/) + TypeScript 5
-- [vite-plugin-pwa](https://vite-pwa-org.netlify.app/) (Workbox) — манифест, service worker, офлайн-кэш
-- [Zustand](https://zustand.docs.pmnd.rs/) + `persist` — клиентский стейт (сумма, выбранные валюты)
-- [TanStack Query](https://tanstack.com/query) + persist-client — серверный стейт (курсы валют), переживает офлайн-перезагрузку
+- [vite-plugin-pwa](https://vite-pwa-org.netlify.app/) (Workbox) — manifest, service worker, offline cache
+- [Zustand](https://zustand.docs.pmnd.rs/) + `persist` — client state (amount, selected currencies)
+- [TanStack Query](https://tanstack.com/query) + persist-client — server state (exchange rates), survives an offline reload
 - CSS Modules
-- Архитектура feature-sliced: `src/app` (инициализация) + `src/features/currency-converter` (вся бизнес-логика фичи)
+- Feature-sliced architecture: `src/app` (bootstrapping) + `src/features/currency-converter` (all feature logic)
 
-## Разработка
+## Development
 
 ```bash
 npm install
 npm run dev
 ```
 
-## Проверки
+## Checks
 
 ```bash
-npm run typecheck   # tsc, только проверка типов
+npm run typecheck   # tsc, type-checking only
 npm run lint         # eslint
-npm run build         # сборка + генерация service worker
-npm run preview       # локальный предпросмотр production-сборки
+npm run build         # build + generate the service worker
+npm run preview       # local preview of the production build
 ```
 
-## Установка как приложение
+## Installing as an app
 
-После `npm run build && npm run preview` открой `http://localhost:4173` в
-Chrome/Edge — появится иконка установки в адресной строке. После установки
-приложение работает офлайн на последних закэшированных курсах валют.
+After `npm run build && npm run preview`, open `http://localhost:4173` in
+Chrome/Edge — an install icon appears in the address bar. Once installed,
+the app keeps working offline on the last cached exchange rates.
 
-## Источник курсов
+## Rates source
 
-[open.er-api.com](https://www.exchangerate-api.com/docs/free) — бесплатный
-API без ключа. При недоступности сети используются приблизительные
-захардкоженные курсы (см. `src/features/currency-converter/api/ratesApi.ts`).
+[open.er-api.com](https://www.exchangerate-api.com/docs/free) — a free,
+keyless API. When the network is unavailable, approximate hardcoded rates
+are used instead (see `src/features/currency-converter/api/ratesApi.ts`).

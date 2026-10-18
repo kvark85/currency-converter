@@ -10,8 +10,8 @@ export function SwapButton({ onClick }: SwapButtonProps) {
       type="button"
       className={styles.button}
       onClick={onClick}
-      title="Поменять местами"
-      aria-label="Поменять валюты местами"
+      title="Swap currencies"
+      aria-label="Swap currencies"
     >
       ⇄
     </button>
