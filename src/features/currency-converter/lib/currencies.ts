@@ -26,7 +26,7 @@ export type Currency = (typeof CURRENCY_INFO)[number]["code"];
 export const CURRENCIES: readonly Currency[] = CURRENCY_INFO.map((c) => c.code);
 
 export const CURRENCY_FLAGS: Record<Currency, string> = Object.fromEntries(
-  CURRENCY_INFO.map((c) => [c.code, `/flags/${c.countryCode}.svg`]),
+  CURRENCY_INFO.map((c) => [c.code, `${import.meta.env.BASE_URL}flags/${c.countryCode}.svg`]),
 ) as Record<Currency, string>;
 
 export function isCurrency(value: string): value is Currency {
