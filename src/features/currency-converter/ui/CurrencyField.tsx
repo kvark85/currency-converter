@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
-import { CURRENCIES, CURRENCY_FLAGS, type Currency } from "../lib/currencies";
+import { CURRENCY_FLAGS, type Currency } from "../lib/currencies";
+import { orderCurrencies } from "../lib/conversion";
 import styles from "./CurrencyField.module.css";
 
 interface CurrencyFieldProps {
@@ -29,17 +30,10 @@ export function CurrencyField({ id, label, value, recentCurrencies, onChange }: 
   const listboxId = `${id}-listbox`;
   const optionId = (index: number) => `${id}-option-${index}`;
 
-  // The field's own current value always leads, so it's never buried by
-  // history from the *other* field; then other recently-used currencies;
-  // then everything else in the original order.
-  const { orderedCurrencies, pinnedCount } = useMemo(() => {
-    const pinned: Currency[] = [value];
-    for (const code of recentCurrencies) {
-      if (!pinned.includes(code)) pinned.push(code);
-    }
-    const rest = CURRENCIES.filter((code) => !pinned.includes(code));
-    return { orderedCurrencies: [...pinned, ...rest], pinnedCount: pinned.length };
-  }, [value, recentCurrencies]);
+  const { orderedCurrencies, pinnedCount } = useMemo(
+    () => orderCurrencies(value, recentCurrencies),
+    [value, recentCurrencies],
+  );
 
   useEffect(() => {
     if (!isOpen) return;
