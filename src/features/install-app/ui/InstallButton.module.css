@@ -1,0 +1,17 @@
+.button {
+  width: 100%;
+  max-width: 380px;
+  flex-shrink: 0;
+  padding: 12px 16px;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--accent);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: var(--border);
+}

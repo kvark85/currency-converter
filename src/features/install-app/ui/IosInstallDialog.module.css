@@ -1,0 +1,62 @@
+.dialog {
+  width: calc(100% - 48px);
+  max-width: 380px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card);
+  color: var(--text);
+}
+
+.dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.content {
+  padding: 24px;
+}
+
+.title {
+  margin: 0 0 16px;
+  font-size: 18px;
+  text-align: center;
+}
+
+.steps {
+  margin: 0;
+  padding-left: 22px;
+  line-height: 1.5;
+}
+
+.steps li + li {
+  margin-top: 10px;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  vertical-align: -4px;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.note {
+  margin: 16px 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.close {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--accent);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}

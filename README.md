@@ -18,7 +18,7 @@ A fast, **offline-first currency converter** built as a **Progressive Web App (P
 ## Features
 
 - **Works offline.** The app shell is cached by a service worker, and the last known exchange rates are persisted locally, so conversions keep working on a plane, in the metro or abroad without roaming.
-- **Installable on Android and desktop.** Open the demo in Chrome and choose *Install app*. It launches from the home screen in its own window, like a native app.
+- **Installable on Android, iOS and desktop.** Open the demo in Chrome and tap *Install app*; on iOS the same button shows the installation steps. It launches from the home screen in its own window, like a native app.
 - **Live rates with graceful fallback.** Fresh rates come from the network, with fallback to cached rates and then to built-in approximate rates. The status line always shows which source is in use.
 - **Remembers your choice.** Amount, selected currencies and recently used currencies survive reloads and app restarts.
 - **Recently used currencies** are pinned to the top of each dropdown.
@@ -30,10 +30,10 @@ A fast, **offline-first currency converter** built as a **Progressive Web App (P
 
 **Android (Chrome):**
 1. Open [kvark85.github.io/currency-converter](https://kvark85.github.io/currency-converter/).
-2. Tap the **⋮** menu → **Install app** (or **Add to Home screen**).
+2. Tap the **Install app** button under the converter (or the **⋮** menu → **Install app**).
 3. Launch it from the home screen. It now works without internet too.
 
-**iOS (Safari):** tap **Share** → **Add to Home Screen**.
+**iOS (Safari):** tap **Install app** for instructions, or go straight to **Share** → **Add to Home Screen**.
 
 **Desktop (Chrome / Edge):** click the install icon in the address bar.
 
@@ -75,6 +75,7 @@ src/
     lib/                      Pure logic: conversion, rates status, currency order, formatting
     ui/                       Presentational components (CSS Modules)
     index.ts                  Public API of the feature
+  features/install-app/       "Install app" button: native prompt or iOS instructions
 ```
 
 ## Getting started
