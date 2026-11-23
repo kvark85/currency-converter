@@ -1,35 +1,37 @@
-import { useMemo } from "react";
 import { useConverterStore } from "./converterStore";
 import { useRatesQuery } from "./useRatesQuery";
 import { FALLBACK_RATES_USD } from "../api/ratesApi";
-import { convert, getRatesStatus } from "../lib/conversion";
+import { getRatesStatus, getUnitRate, parseAmount } from "../lib/conversion";
 
 export type { RatesStatus } from "../lib/conversion";
 
 export function useConversion() {
-  const { amount, from, to, recent, setAmount, setFrom, setTo, swap } = useConverterStore();
-  const { data: liveRates, isLoading, isFetching, isError } = useRatesQuery();
+  const state = useConverterStore();
+  const { data, isPending, isFetching, isError, isPaused } = useRatesQuery();
 
-  const rates = liveRates ?? FALLBACK_RATES_USD;
-
-  const status = getRatesStatus({ hasLiveRates: !!liveRates, isLoading, isFetching, isError });
-
-  const { convertedAmount, unitRate } = useMemo(
-    () => convert(amount, from, to, rates),
-    [amount, from, to, rates],
-  );
+  const { amount, side, from, to } = state;
+  const unitRate = getUnitRate(from, to, data?.rates ?? FALLBACK_RATES_USD);
+  const typed = parseAmount(amount);
+  const computed =
+    typed === null || unitRate === null
+      ? null
+      : side === "from"
+        ? typed * unitRate
+        : typed / unitRate;
 
   return {
-    amount,
-    from,
-    to,
-    recent,
-    convertedAmount,
+    ...state,
+    /** Value for the side the user is not typing into. */
+    computed,
+    isInvalid: typed === null && amount.trim() !== "",
     unitRate,
-    status,
-    setAmount,
-    setFrom,
-    setTo,
-    swap,
+    updatedAt: data?.updatedAt ?? null,
+    status: getRatesStatus({
+      hasLiveRates: !!data,
+      isLoading: isPending,
+      isFetching,
+      // A paused request means the device is offline.
+      isError: isError || isPaused,
+    }),
   };
 }

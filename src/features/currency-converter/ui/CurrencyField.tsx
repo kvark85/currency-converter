@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
-import { CURRENCY_FLAGS, type Currency } from "../lib/currencies";
+import { CURRENCY_FLAGS, CURRENCY_NAMES, type Currency } from "../lib/currencies";
 import { orderCurrencies } from "../lib/conversion";
 import styles from "./CurrencyField.module.css";
 
 interface CurrencyFieldProps {
   id: string;
+  /** Accessible name; the value is appended to it. */
   label: string;
   value: Currency;
   /** Most-recently-used currencies (shared with the other field), most recent first. */
@@ -26,7 +27,6 @@ export function CurrencyField({ id, label, value, recentCurrencies, onChange }: 
   const buttonRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
 
-  const labelId = `${id}-label`;
   const listboxId = `${id}-listbox`;
   const optionId = (index: number) => `${id}-option-${index}`;
 
@@ -120,10 +120,6 @@ export function CurrencyField({ id, label, value, recentCurrencies, onChange }: 
 
   return (
     <div className={styles.wrapper} ref={wrapperRef}>
-      <label className={styles.label} id={labelId}>
-        {label}
-      </label>
-
       <button
         ref={buttonRef}
         type="button"
@@ -132,7 +128,7 @@ export function CurrencyField({ id, label, value, recentCurrencies, onChange }: 
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         aria-controls={listboxId}
-        aria-labelledby={labelId}
+        aria-label={`${label}: ${value}, ${CURRENCY_NAMES[value]}`}
         onClick={() => (isOpen ? close() : open())}
         onKeyDown={handleButtonKeyDown}
       >
@@ -150,7 +146,7 @@ export function CurrencyField({ id, label, value, recentCurrencies, onChange }: 
           className={styles.listbox}
           role="listbox"
           tabIndex={-1}
-          aria-labelledby={labelId}
+          aria-label={label}
           aria-activedescendant={optionId(activeIndex)}
           onKeyDown={handleListKeyDown}
         >
@@ -175,6 +171,7 @@ export function CurrencyField({ id, label, value, recentCurrencies, onChange }: 
             >
               <img className={styles.flag} src={CURRENCY_FLAGS[code]} alt="" />
               <span>{code}</span>
+              <span className={styles.name}>{CURRENCY_NAMES[code]}</span>
             </li>
           ))}
         </ul>

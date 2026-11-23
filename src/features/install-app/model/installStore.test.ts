@@ -19,6 +19,7 @@ function firePrompt() {
 describe("installStore", () => {
   beforeEach(() => {
     vi.resetModules();
+    localStorage.clear();
   });
 
   it("offers nothing until the browser says the app is installable", async () => {
@@ -51,6 +52,15 @@ describe("installStore", () => {
     firePrompt();
     window.dispatchEvent(new Event("appinstalled"));
     expect(store.getState().mode).toBe("none");
+  });
+
+  it("remembers that the user dismissed the button", async () => {
+    const store = await loadStore();
+    expect(store.getState().isDismissed).toBe(false);
+    store.getState().dismiss();
+
+    vi.resetModules();
+    expect((await loadStore()).getState().isDismissed).toBe(true);
   });
 
   it("offers manual steps on iOS", async () => {

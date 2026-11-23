@@ -10,11 +10,11 @@ const mockFetch = (body: unknown, init: { ok?: boolean; status?: number } = {}) 
   } as Response);
 
 describe("fetchRates", () => {
-  it("returns the rates table from the API response", async () => {
+  it("returns the rates and their publication time from the API response", async () => {
     const rates = { USD: 1, EUR: 0.9 };
-    mockFetch({ result: "success", base_code: "USD", rates });
+    mockFetch({ result: "success", base_code: "USD", time_last_update_unix: 1000, rates });
 
-    await expect(fetchRates()).resolves.toEqual(rates);
+    await expect(fetchRates()).resolves.toEqual({ rates, updatedAt: 1_000_000 });
   });
 
   it("throws on an HTTP error", async () => {

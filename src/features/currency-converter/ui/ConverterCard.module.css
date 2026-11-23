@@ -1,10 +1,11 @@
 .card {
+  position: relative;
   width: 100%;
   max-width: 380px;
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 16px;
-  padding: 28px;
+  padding: 24px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
 }
 
@@ -14,17 +15,22 @@
   text-align: center;
 }
 
-.amountBlock {
-  margin-bottom: 18px;
+.error,
+.rate {
+  margin: 16px 0 0;
+  font-size: 14px;
+  text-align: center;
 }
 
-.row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 16px;
+.error {
+  color: var(--error);
 }
 
-.field {
-  flex: 1;
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }

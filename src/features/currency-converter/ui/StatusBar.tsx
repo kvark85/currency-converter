@@ -1,20 +1,31 @@
+import { formatUpdatedAt } from "../lib/format";
 import type { RatesStatus } from "../model/useConversion";
 import styles from "./StatusBar.module.css";
 
-const STATUS_TEXT: Record<RatesStatus, string> = {
-  loading: "Loading rates…",
-  live: "Rates up to date",
-  cached: "Rates from cache (refreshed hourly)",
-  "offline-fallback": "No connection — using approximate rates",
-};
+interface StatusBarProps {
+  status: RatesStatus;
+  updatedAt: number | null;
+}
 
-export function StatusBar({ status }: { status: RatesStatus }) {
-  const className =
-    status === "offline-fallback"
-      ? `${styles.status} ${styles.error}`
-      : status === "cached"
-        ? `${styles.status} ${styles.warn}`
-        : styles.status;
+function getText({ status, updatedAt }: StatusBarProps): string {
+  const when = updatedAt === null ? null : formatUpdatedAt(updatedAt);
+  switch (status) {
+    case "loading":
+      return "Approximate rates · loading current ones…";
+    case "updating":
+      return "Updating rates…";
+    case "live":
+      return when ? `Rates from ${when}` : "Rates up to date";
+    case "cached":
+      return when ? `Couldn’t update · rates from ${when}` : "Couldn’t update · using saved rates";
+    case "offline-fallback":
+      return "⚠ No connection. Rates are approximate and may be out of date";
+  }
+}
 
-  return <div className={className}>{STATUS_TEXT[status]}</div>;
+export function StatusBar(props: StatusBarProps) {
+  const modifier = { "offline-fallback": styles.error, cached: styles.warn }[
+    props.status as string
+  ];
+  return <div className={[styles.status, modifier].filter(Boolean).join(" ")}>{getText(props)}</div>;
 }

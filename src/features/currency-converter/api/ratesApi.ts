@@ -1,9 +1,16 @@
 export type RatesTable = Record<string, number>;
 
+export interface RatesSnapshot {
+  rates: RatesTable;
+  /** When the provider published these rates (ms), or null if it didn't say. */
+  updatedAt: number | null;
+}
+
 interface RatesResponse {
   result: string;
   base_code: string;
   rates: RatesTable;
+  time_last_update_unix?: number;
 }
 
 const API_URL = "https://open.er-api.com/v6/latest/USD";
@@ -29,7 +36,7 @@ export const FALLBACK_RATES_USD: RatesTable = {
   GEL: 2.7,
 };
 
-export async function fetchRates(signal?: AbortSignal): Promise<RatesTable> {
+export async function fetchRates(signal?: AbortSignal): Promise<RatesSnapshot> {
   const res = await fetch(API_URL, { signal });
   if (!res.ok) {
     throw new Error(`Rates request failed: HTTP ${res.status}`);
@@ -40,5 +47,8 @@ export async function fetchRates(signal?: AbortSignal): Promise<RatesTable> {
     throw new Error("Rates response is missing expected fields");
   }
 
-  return data.rates;
+  return {
+    rates: data.rates,
+    updatedAt: data.time_last_update_unix ? data.time_last_update_unix * 1000 : null,
+  };
 }

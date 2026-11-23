@@ -9,13 +9,34 @@ export interface BeforeInstallPromptEvent extends Event {
 /** How this device can install the app: native prompt, manual iOS steps, or not at all. */
 export type InstallMode = "prompt" | "ios" | "none";
 
+const DISMISSED_KEY = "currency-converter:install-dismissed";
+
+function readDismissed(): boolean {
+  try {
+    return localStorage.getItem(DISMISSED_KEY) === "1";
+  } catch {
+    return false; // storage is blocked
+  }
+}
+
 interface InstallState {
+  isDismissed: boolean;
+  dismiss: () => void;
   mode: InstallMode;
   promptEvent: BeforeInstallPromptEvent | null;
   promptInstall: () => Promise<void>;
 }
 
 export const useInstallStore = create<InstallState>()((set, get) => ({
+  isDismissed: readDismissed(),
+  dismiss: () => {
+    set({ isDismissed: true });
+    try {
+      localStorage.setItem(DISMISSED_KEY, "1");
+    } catch {
+      // Storage is blocked: the button stays hidden until the next reload.
+    }
+  },
   mode: !isStandalone() && isIos(navigator) ? "ios" : "none",
   promptEvent: null,
   promptInstall: async () => {

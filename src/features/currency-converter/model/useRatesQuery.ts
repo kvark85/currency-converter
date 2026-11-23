@@ -10,7 +10,8 @@ const ONE_HOUR = 1000 * 60 * 60;
  */
 export function useRatesQuery() {
   return useQuery({
-    queryKey: ["rates", "USD"],
+    // "v2": the cached shape changed, so older persisted entries must be ignored.
+    queryKey: ["rates", "USD", "v2"],
     queryFn: ({ signal }) => fetchRates(signal),
     staleTime: ONE_HOUR,
     gcTime: ONE_HOUR * 24,

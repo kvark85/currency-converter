@@ -22,9 +22,11 @@ A fast, **offline-first currency converter** built as a **Progressive Web App (P
 - **Live rates with graceful fallback.** Fresh rates come from the network, with fallback to cached rates and then to built-in approximate rates. The status line always shows which source is in use.
 - **Remembers your choice.** Amount, selected currencies and recently used currencies survive reloads and app restarts.
 - **Recently used currencies** are pinned to the top of each dropdown.
-- **Country flags** next to every currency, and a one-tap **swap** button.
+- **Two-way input:** type into either row and the other one is calculated.
+- **Light and dark themes** that follow the system setting.
+- **Country flags** and full names in the currency list, and a one-tap **swap** button.
 - **13 currencies:** USD, EUR, GBP, PLN, CHF, JPY, CNY, UAH, KZT, GEL, TRY, AED, RUB.
-- Accepts both `,` and `.` as the decimal separator. The result is rounded to 2 decimals, while the unit rate keeps full precision.
+- Accepts both `,` and `.` as the decimal separator. The result is rounded to 2 decimals, while the unit rate keeps more precision.
 
 ## Install on your phone
 

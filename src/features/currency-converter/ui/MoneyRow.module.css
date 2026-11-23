@@ -1,0 +1,46 @@
+.row {
+  padding: 12px;
+  border: 1px solid var(--field-border);
+  border-radius: 12px;
+  background: var(--field);
+}
+
+.row:has(.input:focus) {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.row:has(.input[aria-invalid="true"]) {
+  border-color: var(--error);
+  box-shadow: 0 0 0 1px var(--error);
+}
+
+.label {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.long {
+  font-size: 18px;
+}

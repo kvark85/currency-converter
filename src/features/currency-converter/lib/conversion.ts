@@ -1,36 +1,30 @@
 import { CURRENCIES, type Currency } from "./currencies";
 import type { RatesTable } from "../api/ratesApi";
 
-export type RatesStatus = "loading" | "live" | "cached" | "offline-fallback";
+export type RatesStatus = "loading" | "live" | "updating" | "cached" | "offline-fallback";
 
-export interface ConversionResult {
-  convertedAmount: number | null;
-  unitRate: number | null;
+/** Units of `to` per one unit of `from`. All rates are relative to USD. */
+export function getUnitRate(from: Currency, to: Currency, rates: RatesTable): number | null {
+  const fromRate = rates[from];
+  const toRate = rates[to];
+  return fromRate && toRate ? toRate / fromRate : null;
 }
 
 /**
- * Converts an amount typed by the user between two currencies. All rates are
- * relative to USD, so the amount goes through USD. Accepts both "," and "."
- * as the decimal separator. Returns nulls for input that can't be converted.
+ * Parses an amount typed by the user. Accepts both "," and "." as the decimal
+ * separator and spaces between thousands; when both "," and "." are present
+ * (pasted text), the last one is the decimal separator. Null if not a number.
  */
-export function convert(
-  amountText: string,
-  from: Currency,
-  to: Currency,
-  rates: RatesTable,
-): ConversionResult {
-  const amount = parseFloat(amountText.replace(",", "."));
-  const fromRate = rates[from];
-  const toRate = rates[to];
-
-  if (!Number.isFinite(amount) || !fromRate || !toRate) {
-    return { convertedAmount: null, unitRate: null };
+export function parseAmount(text: string): number | null {
+  let clean = text.replace(/\s/g, "");
+  if (clean.includes(",") && clean.includes(".")) {
+    const thousands = clean.lastIndexOf(",") > clean.lastIndexOf(".") ? "." : ",";
+    clean = clean.replaceAll(thousands, "");
   }
-
-  return {
-    convertedAmount: (amount / fromRate) * toRate,
-    unitRate: toRate / fromRate,
-  };
+  clean = clean.replace(",", ".");
+  if (!/^(\d+\.?\d*|\.\d+)$/.test(clean)) return null;
+  const amount = Number(clean);
+  return Number.isFinite(amount) ? amount : null;
 }
 
 interface RatesQueryState {
@@ -47,11 +41,11 @@ export function getRatesStatus({
   isFetching,
   isError,
 }: RatesQueryState): RatesStatus {
-  if (isLoading) return "loading";
   // isError can be true while React Query still holds the last good data,
   // so it must be checked before falling through to "live".
   if (isError) return hasLiveRates ? "cached" : "offline-fallback";
-  if (isFetching) return "cached";
+  if (isLoading) return "loading";
+  if (isFetching) return "updating";
   return "live";
 }
 

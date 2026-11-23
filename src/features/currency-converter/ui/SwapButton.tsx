@@ -13,7 +13,7 @@ export function SwapButton({ onClick }: SwapButtonProps) {
       title="Swap currencies"
       aria-label="Swap currencies"
     >
-      ⇄
+      ⇅
     </button>
   );
 }

@@ -39,10 +39,10 @@ describe("converterStore", () => {
   });
 
   it("persists the selection to localStorage", () => {
-    useConverterStore.getState().setAmount("250");
+    useConverterStore.getState().setAmount("250", "to");
 
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}");
-    expect(saved.state).toMatchObject({ amount: "250", from: "USD", to: "EUR" });
+    expect(saved.state).toMatchObject({ amount: "250", side: "to", from: "USD", to: "EUR" });
   });
 
   it("ignores unknown currencies when restoring saved state", async () => {

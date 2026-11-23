@@ -1,35 +1,39 @@
 import { describe, expect, it } from "vitest";
-import { convert, getRatesStatus, orderCurrencies } from "./conversion";
+import { getRatesStatus, getUnitRate, orderCurrencies, parseAmount } from "./conversion";
 import { CURRENCIES } from "./currencies";
 
 const RATES = { USD: 1, EUR: 0.9, PLN: 4, JPY: 150 };
 
-describe("convert", () => {
-  it("converts from USD to another currency", () => {
-    expect(convert("100", "USD", "EUR", RATES)).toEqual({ convertedAmount: 90, unitRate: 0.9 });
+describe("getUnitRate", () => {
+  it("goes through USD for two non-USD currencies", () => {
+    expect(getUnitRate("EUR", "PLN", RATES)).toBeCloseTo(4 / 0.9);
   });
 
-  it("converts between two non-USD currencies through USD", () => {
-    const { convertedAmount, unitRate } = convert("90", "EUR", "PLN", RATES);
-    expect(convertedAmount).toBeCloseTo(400);
-    expect(unitRate).toBeCloseTo(4 / 0.9);
+  it("is 1 for the same currency", () => {
+    expect(getUnitRate("PLN", "PLN", RATES)).toBe(1);
   });
 
-  it("returns the same amount for the same currency", () => {
-    expect(convert("42", "PLN", "PLN", RATES)).toEqual({ convertedAmount: 42, unitRate: 1 });
+  it("is null when a rate is missing", () => {
+    expect(getUnitRate("USD", "GBP", RATES)).toBeNull();
+  });
+});
+
+describe("parseAmount", () => {
+  it.each([
+    ["100", 100],
+    ["2,5", 2.5],
+    ["2.5", 2.5],
+    [".5", 0.5],
+    ["5.", 5],
+    ["1\u00a0234.56", 1234.56],
+    ["1,234.56", 1234.56],
+    ["1.234,56", 1234.56],
+  ])("parses %s", (text, expected) => {
+    expect(parseAmount(text)).toBe(expected);
   });
 
-  it("accepts a comma as the decimal separator", () => {
-    expect(convert("2,5", "USD", "PLN", RATES).convertedAmount).toBe(10);
-  });
-
-  it("returns nulls for empty or non-numeric input", () => {
-    expect(convert("", "USD", "EUR", RATES)).toEqual({ convertedAmount: null, unitRate: null });
-    expect(convert("abc", "USD", "EUR", RATES)).toEqual({ convertedAmount: null, unitRate: null });
-  });
-
-  it("returns nulls when a rate is missing", () => {
-    expect(convert("10", "USD", "GBP", RATES)).toEqual({ convertedAmount: null, unitRate: null });
+  it.each(["", "abc", "12abc", "-5", "1.2.3", "."])("rejects '%s'", (text) => {
+    expect(parseAmount(text)).toBeNull();
   });
 });
 
@@ -44,8 +48,8 @@ describe("getRatesStatus", () => {
     expect(getRatesStatus(idle)).toBe("live");
   });
 
-  it("is 'cached' while refetching in the background", () => {
-    expect(getRatesStatus({ ...idle, isFetching: true })).toBe("cached");
+  it("is 'updating' while refetching in the background", () => {
+    expect(getRatesStatus({ ...idle, isFetching: true })).toBe("updating");
   });
 
   it("is 'cached' when the request failed but previous rates are kept", () => {

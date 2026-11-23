@@ -8,8 +8,12 @@ function touch(recent: Currency[], code: Currency): Currency[] {
   return [code, ...recent.filter((c) => c !== code)].slice(0, MAX_RECENT);
 }
 
+/** Which row the user typed the amount into; the other one is computed. */
+export type Side = "from" | "to";
+
 interface ConverterState {
   amount: string;
+  side: Side;
   from: Currency;
   to: Currency;
   /**
@@ -18,7 +22,7 @@ interface ConverterState {
    * are not "usage" and must never get stuck in here permanently.
    */
   recent: Currency[];
-  setAmount: (amount: string) => void;
+  setAmount: (amount: string, side: Side) => void;
   setFrom: (currency: Currency) => void;
   setTo: (currency: Currency) => void;
   swap: () => void;
@@ -33,10 +37,11 @@ export const useConverterStore = create<ConverterState>()(
   persist(
     (set) => ({
       amount: "100",
+      side: "from",
       from: "USD",
       to: "EUR",
       recent: [],
-      setAmount: (amount) => set({ amount }),
+      setAmount: (amount, side) => set({ amount, side }),
       setFrom: (from) => set((state) => ({ from, recent: touch(state.recent, from) })),
       setTo: (to) => set((state) => ({ to, recent: touch(state.recent, to) })),
       swap: () => set((state) => ({ from: state.to, to: state.from })),
@@ -45,13 +50,14 @@ export const useConverterStore = create<ConverterState>()(
       name: "currency-converter:selection",
       partialize: (state) => ({
         amount: state.amount,
+        side: state.side,
         from: state.from,
         to: state.to,
         recent: state.recent,
       }),
       merge: (persisted, current) => {
         const saved = persisted as
-          | Partial<Pick<ConverterState, "amount" | "from" | "to" | "recent">>
+          | Partial<Pick<ConverterState, "amount" | "side" | "from" | "to" | "recent">>
           | undefined;
         const recent = Array.isArray(saved?.recent)
           ? saved.recent.filter(isCurrency).slice(0, MAX_RECENT)
@@ -59,6 +65,7 @@ export const useConverterStore = create<ConverterState>()(
         return {
           ...current,
           ...saved,
+          side: saved?.side === "to" ? "to" : "from",
           from: saved?.from && isCurrency(saved.from) ? saved.from : current.from,
           to: saved?.to && isCurrency(saved.to) ? saved.to : current.to,
           recent,
